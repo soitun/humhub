@@ -30,7 +30,7 @@ class PendingRegistrationSearch extends Invite
     {
         return [
             [['id'], 'integer'],
-            [['email', 'created_at', 'originator.username',  'source', 'language'], 'safe'],
+            [['email', 'created_at', 'originator.username', 'source', 'language'], 'safe'],
         ];
     }
 
@@ -61,7 +61,7 @@ class PendingRegistrationSearch extends Invite
             'attributes' => [
                 'email',
                 'created_at',
-            ]
+            ],
         ]);
 
         $this->load($params);

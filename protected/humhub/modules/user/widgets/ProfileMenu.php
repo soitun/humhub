@@ -29,7 +29,6 @@ use humhub\modules\user\permissions\ViewAboutPage;
  */
 class ProfileMenu extends LeftNavigation
 {
-
     /**
      * @var User
      */
@@ -53,7 +52,7 @@ class ProfileMenu extends LeftNavigation
                 'icon' => 'stream',
                 'url' => $this->user->createUrl('//user/profile/home'),
                 'sortOrder' => 200,
-                'isActive' => MenuLink::isActiveState('user', 'profile', ['index', 'home'])
+                'isActive' => MenuLink::isActiveState('user', 'profile', ['index', 'home']),
             ]));
         }
 
@@ -63,7 +62,7 @@ class ProfileMenu extends LeftNavigation
             'url' => $this->user->createUrl('/user/profile/about'),
             'sortOrder' => 300,
             'isActive' => MenuLink::isActiveState('user', 'profile', 'about'),
-            'isVisible' => $this->user->permissionManager->can(ViewAboutPage::class)
+            'isVisible' => $this->user->permissionManager->can(ViewAboutPage::class),
         ]));
 
         parent::init();
@@ -82,5 +81,3 @@ class ProfileMenu extends LeftNavigation
     }
 
 }
-
-?>

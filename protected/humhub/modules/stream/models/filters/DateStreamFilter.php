@@ -22,8 +22,8 @@ use yii\helpers\FormatConverter;
  */
 class DateStreamFilter extends StreamQueryFilter
 {
-    const CATEGORY_FROM = 'date_filter_from';
-    const CATEGORY_TO = 'date_filter_to';
+    public const CATEGORY_FROM = 'date_filter_from';
+    public const CATEGORY_TO = 'date_filter_to';
 
     /**
      * Created from date
@@ -44,14 +44,14 @@ class DateStreamFilter extends StreamQueryFilter
     {
         return [
             [['date_filter_from', 'date_filter_to'], 'safe'],
-            ['date_filter_from', 'validateDateFrom']
+            ['date_filter_from', 'validateDateFrom'],
         ];
     }
 
     public function validateDateFrom()
     {
         if ($this->isFilteredFrom() && $this->isFilteredTo() && $this->dateFrom > $this->dateTo) {
-            $this->addError(self::CATEGORY_FROM, Yii::t('StreamModule.base','Date "From" should be before "To"!'));
+            $this->addError(self::CATEGORY_FROM, Yii::t('StreamModule.base', 'Date "From" should be before "To"!'));
         }
     }
 

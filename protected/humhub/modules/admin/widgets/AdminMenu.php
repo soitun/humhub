@@ -9,18 +9,18 @@
 namespace humhub\modules\admin\widgets;
 
 use humhub\components\Application;
-use humhub\modules\marketplace\Module;
-use humhub\modules\ui\menu\MenuEntry;
-use Yii;
+use humhub\modules\admin\permissions\ManageGroups;
 use humhub\modules\admin\permissions\ManageModules;
+use humhub\modules\admin\permissions\ManageSettings;
 use humhub\modules\admin\permissions\ManageSpaces;
+use humhub\modules\admin\permissions\ManageUsers;
 use humhub\modules\admin\permissions\SeeAdminInformation;
+use humhub\modules\marketplace\services\MarketplaceService;
+use humhub\modules\ui\menu\MenuEntry;
 use humhub\modules\ui\menu\MenuLink;
 use humhub\modules\ui\menu\widgets\LeftNavigation;
-use humhub\modules\admin\permissions\ManageUsers;
-use humhub\modules\admin\permissions\ManageSettings;
-use humhub\modules\admin\permissions\ManageGroups;
-use yii\caching\DummyCache;
+use humhub\widgets\Label;
+use Yii;
 
 /**
  * AdminMenu implements the navigation in the administration section.
@@ -49,7 +49,7 @@ use yii\caching\DummyCache;
  */
 class AdminMenu extends LeftNavigation
 {
-    const SESSION_CAN_SEE_ADMIN_SECTION = 'user.canSeeAdminSection';
+    public const SESSION_CAN_SEE_ADMIN_SECTION = 'user.canSeeAdminSection';
 
     /**
      * @inheritdoc
@@ -74,21 +74,21 @@ class AdminMenu extends LeftNavigation
             'isVisible' => Yii::$app->user->can([
                 ManageUsers::class,
                 ManageSettings::class,
-                ManageGroups::class
-            ])
+                ManageGroups::class,
+            ]),
         ]));
 
         $this->addEntry(new MenuLink([
             'id' => 'spaces',
             'label' => Yii::t('AdminModule.base', 'Spaces'),
             'url' => ['/admin/space'],
-            'icon' => 'inbox',
+            'icon' => 'dot-circle-o',
             'sortOrder' => 400,
             'isActive' => MenuLink::isActiveState('admin', 'space'),
             'isVisible' => Yii::$app->user->can([
                 ManageSpaces::class,
-                ManageSettings::class
-            ])
+                ManageSettings::class,
+            ]),
         ]));
 
         $this->addEntry(new MenuLink([
@@ -99,7 +99,7 @@ class AdminMenu extends LeftNavigation
             'sortOrder' => 500,
             'htmlOptions' => ['class' => 'modules'],
             'isActive' => MenuLink::isActiveState('admin', 'module'),
-            'isVisible' => Yii::$app->user->can(ManageModules::class)
+            'isVisible' => Yii::$app->user->can(ManageModules::class) || Yii::$app->user->can(ManageSettings::class),
         ]));
 
         $this->addEntry(new MenuLink([
@@ -109,7 +109,7 @@ class AdminMenu extends LeftNavigation
             'icon' => 'gears',
             'sortOrder' => 600,
             'isActive' => MenuLink::isActiveState('admin', 'setting'),
-            'isVisible' => Yii::$app->user->can(ManageSettings::class)
+            'isVisible' => Yii::$app->user->can(ManageSettings::class),
         ]));
 
         $this->addEntry(new MenuLink([
@@ -119,7 +119,7 @@ class AdminMenu extends LeftNavigation
             'icon' => 'info-circle',
             'sortOrder' => 1000,
             'isActive' => MenuLink::isActiveState('admin', 'information'),
-            'isVisible' => Yii::$app->user->can(SeeAdminInformation::class)
+            'isVisible' => Yii::$app->user->can(SeeAdminInformation::class),
         ]));
 
         parent::init();
@@ -170,32 +170,10 @@ class AdminMenu extends LeftNavigation
         parent::addEntry($entry);
     }
 
-
-    /**
-     * @return string
-     */
-    private function getMarketplaceUpdatesBadge()
+    private function getMarketplaceUpdatesBadge(): string
     {
-        /** @var Module $module */
-        $module = Yii::$app->getModule('marketplace');
-        if ($module === null || !$module->enabled) {
-            return '';
-        }
-
-        if (Yii::$app->cache instanceof DummyCache) {
-            return '';
-        }
-
-        try {
-            $updatesCount = count($module->onlineModuleManager->getModuleUpdates());
-            if ($updatesCount > 0) {
-                return '&nbsp;&nbsp;<span class="label label-danger">' . $updatesCount . '</span>';
-            }
-        } catch (\Exception $ex) {
-            ;
-        }
-
-        return '';
+        $updatesCount = (new MarketplaceService())->getPendingModuleUpdateCount();
+        return $updatesCount > 0 ? '&nbsp;&nbsp;' . Label::danger($updatesCount) : '';
     }
 
 }

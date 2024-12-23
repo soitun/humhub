@@ -8,7 +8,6 @@
 
 namespace humhub\controllers;
 
-
 use humhub\components\Controller;
 use humhub\models\UrlOembed;
 use Yii;
@@ -22,7 +21,7 @@ class OembedController extends Controller
     /**
      * @inheritdoc
      */
-    public function getAccessRules()
+    protected function getAccessRules()
     {
         return [['login']];
     }
@@ -71,7 +70,7 @@ class OembedController extends Controller
 
         return $this->asJson([
             'success' => true,
-            'content' => $urlOembed ? $urlOembed->preview : UrlOembed::loadUrl($url)
+            'content' => $urlOembed ? $urlOembed->preview : UrlOembed::loadUrl($url),
         ]);
     }
 }

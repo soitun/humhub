@@ -14,11 +14,18 @@ use humhub\modules\admin\models\PendingRegistrationSearch;
 use humhub\modules\admin\permissions\ManageGroups;
 use humhub\modules\admin\permissions\ManageUsers;
 use humhub\modules\user\models\Invite;
+use Throwable;
 use Yii;
+use yii\base\Exception;
 use yii\web\HttpException;
+use yii\web\Response;
 
 class PendingRegistrationsController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
+    public $adminOnly = false;
 
     /**
      * @inheritDoc
@@ -34,15 +41,15 @@ class PendingRegistrationsController extends Controller
     /**
      * @inheritdoc
      */
-    public function getAccessRules()
+    protected function getAccessRules()
     {
         return [
             [
                 'permission' => [
                     ManageUsers::class,
                     ManageGroups::class,
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -62,7 +69,7 @@ class PendingRegistrationsController extends Controller
                 PendingRegistrationSearch::SOURCE_INVITE => Yii::t('AdminModule.base', 'Invite by email'),
                 PendingRegistrationSearch::SOURCE_INVITE_BY_LINK => Yii::t('AdminModule.base', 'Invite by link'),
                 PendingRegistrationSearch::SOURCE_SELF => Yii::t('AdminModule.base', 'Sign up'),
-            ]
+            ],
         ]);
     }
 
@@ -70,10 +77,10 @@ class PendingRegistrationsController extends Controller
      * Export user list as csv or xlsx
      *
      * @param string $format supported format by phpspreadsheet
-     * @return \yii\web\Response
+     * @return Response
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
-     * @throws \yii\base\Exception
+     * @throws Exception
      */
     public function actionExport($format)
     {
@@ -95,7 +102,7 @@ class PendingRegistrationsController extends Controller
     /**
      * Resend a invite
      *
-     * @param integer $id
+     * @param int $id
      * @return string
      * @throws HttpException
      */
@@ -107,7 +114,7 @@ class PendingRegistrationsController extends Controller
             $invite->sendInviteMail();
             $this->view->success(Yii::t(
                 'AdminModule.user',
-                'Resend invitation email'
+                'Resend invitation email',
             ));
             return $this->redirect(['index']);
         }
@@ -117,10 +124,10 @@ class PendingRegistrationsController extends Controller
     /**
      * Delete an invite
      *
-     * @param integer $id
+     * @param int $id
      * @return string
      * @throws HttpException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionDelete($id)
     {
@@ -130,7 +137,7 @@ class PendingRegistrationsController extends Controller
             $invite->delete();
             $this->view->success(Yii::t(
                 'AdminModule.user',
-                'Deleted invitation'
+                'Deleted invitation',
             ));
             return $this->redirect(['index']);
         }
@@ -140,10 +147,10 @@ class PendingRegistrationsController extends Controller
     /**
      * Delete all invitations
      *
-     * @param integer $id
+     * @param int $id
      * @return string
      * @throws HttpException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionDeleteAll()
     {
@@ -152,7 +159,7 @@ class PendingRegistrationsController extends Controller
 
             $this->view->success(Yii::t(
                 'AdminModule.user',
-                'All open registration invitations were successfully deleted.'
+                'All open registration invitations were successfully deleted.',
             ));
         }
         return $this->redirect(['index']);
@@ -161,10 +168,10 @@ class PendingRegistrationsController extends Controller
     /**
      * Delete all or selected invitation
      *
-     * @param integer $id
+     * @param int $id
      * @return string
      * @throws HttpException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionDeleteAllSelected()
     {
@@ -178,7 +185,7 @@ class PendingRegistrationsController extends Controller
                 }
                 $this->view->success(Yii::t(
                     'AdminModule.user',
-                    'The selected invitations have been successfully deleted!'
+                    'The selected invitations have been successfully deleted!',
                 ));
             }
         }
@@ -225,7 +232,7 @@ class PendingRegistrationsController extends Controller
         if ($invite === null) {
             throw new HttpException(404, Yii::t(
                 'AdminModule.user',
-                'Invite not found!'
+                'Invite not found!',
             ));
         }
         return $invite;

@@ -20,7 +20,6 @@ use Yii;
  */
 class PoweredBy extends Widget
 {
-
     /**
      * @var bool return text link only
      */
@@ -50,7 +49,7 @@ class PoweredBy extends Widget
         }
 
         return Yii::t('base', 'Powered by {name}', [
-            'name' => Html::a('HumHub', 'https://humhub.org', $this->linkOptions)
+            'name' => Html::a('HumHub', 'https://humhub.org', $this->linkOptions),
         ]);
     }
 

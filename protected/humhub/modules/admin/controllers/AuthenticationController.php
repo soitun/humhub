@@ -19,7 +19,6 @@ use yii\helpers\Html;
  */
 class AuthenticationController extends Controller
 {
-
     /**
      * @inheritdoc
      */
@@ -33,21 +32,21 @@ class AuthenticationController extends Controller
         $this->setActionTitles([
             'basic' => Yii::t('AdminModule.base', 'Basic'),
             'authentication' => Yii::t('AdminModule.base', 'Authentication'),
-            'authentication-ldap' => Yii::t('AdminModule.base', 'Authentication')
+            'authentication-ldap' => Yii::t('AdminModule.base', 'Authentication'),
         ]);
 
         $this->subLayout = '@admin/views/layouts/user';
 
-        return parent::init();
+        parent::init();
     }
 
     /**
      * @inheritdoc
      */
-    public function getAccessRules()
+    protected function getAccessRules()
     {
         return [
-            ['permissions' => ManageSettings::class]
+            ['permissions' => ManageSettings::class],
         ];
     }
 
@@ -57,7 +56,7 @@ class AuthenticationController extends Controller
      */
     public function actionIndex()
     {
-        $form = new AuthenticationSettingsForm;
+        $form = new AuthenticationSettingsForm();
         if ($form->load(Yii::$app->request->post()) && $form->validate() && $form->save()) {
             $this->view->saved();
         }

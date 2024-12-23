@@ -10,7 +10,6 @@ use tests\codeception\_support\BasePage;
  */
 class LoginPage extends BasePage
 {
-
     public $route = 'user/auth/login';
 
     /**
@@ -31,8 +30,8 @@ class LoginPage extends BasePage
     {
         $this->actor->fillField('Invite[email]', $email);
         $this->actor->submitForm('#invite-form', ['Invite' => [
-            'email' => $email
-       ]]);
+            'email' => $email,
+        ]]);
     }
 
 }

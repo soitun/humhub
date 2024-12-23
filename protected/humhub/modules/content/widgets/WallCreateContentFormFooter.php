@@ -22,7 +22,6 @@ use yii\web\HttpException;
  */
 class WallCreateContentFormFooter extends Widget
 {
-
     /**
      * @var string form submit route/url (required)
      */
@@ -66,7 +65,7 @@ class WallCreateContentFormFooter extends Widget
             'canSwitchVisibility' => $this->contentContainer->visibility !== Space::VISIBILITY_NONE && $this->contentContainer->can(CreatePublicContent::class),
             'fileHandlers' => FileHandlerCollection::getByType([FileHandlerCollection::TYPE_IMPORT, FileHandlerCollection::TYPE_CREATE]),
             'pickerUrl' => $this->contentContainer instanceof Space ? $this->contentContainer->createUrl('/space/membership/search') : null,
-            'scheduleUrl' => $this->contentContainer->createUrl('/content/content/schedule-options')
+            'scheduleUrl' => $this->contentContainer->createUrl('/content/content/schedule-options'),
         ]);
     }
 }

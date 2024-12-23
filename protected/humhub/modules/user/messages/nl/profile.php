@@ -57,6 +57,7 @@ return array (
   'LinkedIn URL' => 'LinkedIn URL',
   'Male' => 'Man',
   'Markdown' => 'Opmaakcodering',
+  'Mastodon URL' => 'Mastodon URL',
   'Maximum length' => 'Maximale lengte',
   'Maximum value' => 'Maximum waarde',
   'Minimum length' => 'Minimale lengte',

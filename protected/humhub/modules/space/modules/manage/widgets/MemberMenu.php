@@ -8,6 +8,7 @@
 
 namespace humhub\modules\space\modules\manage\widgets;
 
+use humhub\modules\space\models\Space;
 use Yii;
 use humhub\modules\ui\menu\MenuLink;
 use humhub\modules\space\models\Membership;
@@ -22,7 +23,7 @@ use humhub\modules\ui\menu\widgets\TabMenu;
 class MemberMenu extends TabMenu
 {
     /**
-     * @var \humhub\modules\space\models\Space
+     * @var Space
      */
     public $space;
 
@@ -36,7 +37,7 @@ class MemberMenu extends TabMenu
             'label' => Yii::t('SpaceModule.manage', 'Members'),
             'url' => $this->space->createUrl('/space/manage/member/index'),
             'sortOrder' => 100,
-            'isActive' => MenuLink::isActiveState(null, 'member', 'index')
+            'isActive' => MenuLink::isActiveState(null, 'member', 'index'),
         ]));
 
         if ($this->countPendingInvites() != 0) {
@@ -44,7 +45,7 @@ class MemberMenu extends TabMenu
                 'label' => Yii::t('SpaceModule.manage', 'Pending Invites') . '&nbsp;&nbsp;<span class="label label-danger">' . $this->countPendingInvites() . '</span>',
                 'url' => $this->space->createUrl('/space/manage/member/pending-invitations'),
                 'sortOrder' => 200,
-                'isActive' => MenuLink::isActiveState(null, 'member', 'pending-invitations')
+                'isActive' => MenuLink::isActiveState(null, 'member', 'pending-invitations'),
             ]));
         }
         if ($this->countPendingApprovals() != 0) {
@@ -52,7 +53,7 @@ class MemberMenu extends TabMenu
                 'label' => Yii::t('SpaceModule.manage', 'Pending Approvals') . '&nbsp;&nbsp;<span class="label label-danger">' . $this->countPendingApprovals() . '</span>',
                 'url' => $this->space->createUrl('/space/manage/member/pending-approvals'),
                 'sortOrder' => 300,
-                'isActive' => MenuLink::isActiveState(null, 'member', 'pending-approvals')
+                'isActive' => MenuLink::isActiveState(null, 'member', 'pending-approvals'),
             ]));
         }
 
@@ -61,7 +62,7 @@ class MemberMenu extends TabMenu
                 'label' => Yii::t('SpaceModule.manage', 'Owner'),
                 'url' => $this->space->createUrl('/space/manage/member/change-owner'),
                 'sortOrder' => 500,
-                'isActive' => MenuLink::isActiveState(null, 'member', 'change-owner')
+                'isActive' => MenuLink::isActiveState(null, 'member', 'change-owner'),
             ]));
         }
 

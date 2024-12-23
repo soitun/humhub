@@ -19,12 +19,15 @@ use yii\web\HttpException;
 
 class ManageController extends ContentContainerController
 {
-    public function getAccessRules()
+    /**
+     * @inheritdoc
+     */
+    protected function getAccessRules()
     {
         return [
             ['login'],
             ['permission' => ManageTopics::class],
-            ['json' => ['delete']]
+            ['json' => ['delete']],
         ];
     }
 
@@ -32,7 +35,7 @@ class ManageController extends ContentContainerController
     {
         parent::init();
 
-        if($this->contentContainer instanceof User) {
+        if ($this->contentContainer instanceof User) {
             $this->subLayout = "@humhub/modules/user/views/account/_layout";
         }
     }
@@ -57,14 +60,14 @@ class ManageController extends ContentContainerController
             'contentContainer' => $this->contentContainer,
             'dataProvider' => $this->getTopicProvider(),
             'addModel' => new Topic(),
-            'title' => $title
+            'title' => $title,
         ]);
     }
 
     private function getTopicProvider()
     {
         return new ActiveDataProvider([
-            'query' =>  Topic::findByContainer($this->contentContainer)->orderBy('sort_order, name'),
+            'query' => Topic::findByContainer($this->contentContainer)->orderBy('sort_order, name'),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -95,7 +98,7 @@ class ManageController extends ContentContainerController
         if ($topic->load(Yii::$app->request->post()) && $topic->save()) {
             return ModalClose::widget([
                 'saved' => true,
-                'reload' => true
+                'reload' => true,
             ]);
         }
 

@@ -19,7 +19,10 @@ use humhub\modules\post\models\forms\PostEditForm;
 use humhub\modules\post\models\Post;
 use humhub\modules\post\permissions\CreatePost;
 use humhub\modules\post\widgets\Form;
+use Throwable;
 use Yii;
+use yii\base\Exception;
+use yii\base\InvalidConfigException;
 use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -33,8 +36,8 @@ class PostController extends ContentContainerController
      * @param $id
      * @return string
      * @throws HttpException
-     * @throws \Throwable
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws Exception
      */
     public function actionView($id)
     {
@@ -62,9 +65,9 @@ class PostController extends ContentContainerController
 
     /**
      * @return array|mixed
-     * @throws \Throwable
-     * @throws \yii\base\Exception
-     * @throws \yii\base\InvalidConfigException
+     * @throws Throwable
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public function actionPost()
     {
@@ -99,7 +102,7 @@ class PostController extends ContentContainerController
             // Reload record to get populated updated_at field
             if ($model->save()) {
                 $post = Post::findOne(['id' => $id]);
-                return $this->renderAjaxContent(StreamEntryWidget::renderStreamEntry($post));
+                return $this->renderAjaxContent(StreamEntryWidget::renderStreamEntry($post, WallStreamEntryOptions::getInstanceFromRequest()));
             } else {
                 Yii::$app->response->statusCode = 400;
             }
@@ -109,6 +112,7 @@ class PostController extends ContentContainerController
             'model' => $model,
             'fileHandlers' => FileHandlerCollection::getByType([FileHandlerCollection::TYPE_IMPORT, FileHandlerCollection::TYPE_CREATE]),
             'submitUrl' => $post->content->container->createUrl('/post/post/edit', ['id' => $post->id]),
+            'viewContext' => Yii::$app->request->get('viewContext'),
         ]);
     }
 

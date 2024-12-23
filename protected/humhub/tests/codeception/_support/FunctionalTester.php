@@ -24,7 +24,6 @@ use yii\helpers\Url;
  */
 class FunctionalTester extends BaseTester
 {
-
     use _generated\FunctionalTesterActions;
 
     public function amAdmin($logout = false)
@@ -49,7 +48,7 @@ class FunctionalTester extends BaseTester
             'group_id' => $groupId,
             'module_id' => $permission->moduleId,
             'class' => get_class($permission),
-            'state' => $state
+            'state' => $state,
         ]))->save();
 
         \Yii::$app->user->getPermissionManager()->clear();
@@ -248,9 +247,9 @@ class FunctionalTester extends BaseTester
 
         if(is_int($spaceOrIndexOrGuid)) {
             $guid = $this->getFixtureSpaceGuid(--$spaceOrIndexOrGuid);
-        } else if(is_string($spaceOrIndexOrGuid)) {
+        } elseif(is_string($spaceOrIndexOrGuid)) {
             $guid = $spaceOrIndexOrGuid;
-        } else if($spaceOrIndexOrGuid instanceof Space) {
+        } elseif($spaceOrIndexOrGuid instanceof Space) {
             $guid = $spaceOrIndexOrGuid->guid;
         } else {
             $guid = '';

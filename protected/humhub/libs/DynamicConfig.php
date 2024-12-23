@@ -20,7 +20,6 @@ use yii\helpers\ArrayHelper;
  */
 class DynamicConfig extends BaseObject
 {
-
     /**
      * Add an array to the dynamic configuration
      *
@@ -72,7 +71,7 @@ class DynamicConfig extends BaseObject
         file_put_contents($configFile, $content);
 
         if (function_exists('opcache_invalidate')) {
-            opcache_invalidate($configFile);
+            @opcache_invalidate($configFile);
         }
 
         if (function_exists('apc_compile_file')) {
@@ -110,18 +109,18 @@ class DynamicConfig extends BaseObject
         if (in_array($cacheClass, ['yii\caching\DummyCache', 'yii\caching\FileCache'])) {
             $config['components']['cache'] = [
                 'class' => $cacheClass,
-                'keyPrefix' => Yii::$app->id
+                'keyPrefix' => Yii::$app->id,
             ];
         } elseif ($cacheClass == 'yii\caching\ApcCache' && (function_exists('apcu_add') || function_exists('apc_add'))) {
             $config['components']['cache'] = [
                 'class' => $cacheClass,
                 'keyPrefix' => Yii::$app->id,
-                'useApcu' => (function_exists('apcu_add'))
+                'useApcu' => (function_exists('apcu_add')),
             ];
         } elseif ($cacheClass === \yii\redis\Cache::class) {
             $config['components']['cache'] = [
                 'class' => \yii\redis\Cache::class,
-                'keyPrefix' => Yii::$app->id
+                'keyPrefix' => Yii::$app->id,
             ];
         }
 

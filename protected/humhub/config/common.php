@@ -16,6 +16,8 @@ Yii::setAlias('@themes', '@webroot/themes');
 
 // Workaround: PHP 7.3 compatible ZF2 ArrayObject class
 Yii::$classMap['Zend\Stdlib\ArrayObject'] = '@humhub/compat/ArrayObject.php';
+Yii::$classMap['humhub\modules\search\interfaces\Searchable'] = '@humhub/compat/search/Searchable.php';
+Yii::$classMap['humhub\modules\search\events\SearchAddEvent'] = '@humhub/compat/search/SearchAddEvent.php';
 
 // Workaround: If OpenSSL extension is not available (#3852)
 if (!defined('PKCS7_DETACHED')) {
@@ -24,9 +26,9 @@ if (!defined('PKCS7_DETACHED')) {
 
 $config = [
     'name' => 'HumHub',
-    'version' => '1.14.1',
-    'minRecommendedPhpVersion' => '7.4',
-    'minSupportedPhpVersion' => '7.4',
+    'version' => '1.16.3',
+    'minRecommendedPhpVersion' => '8.1',
+    'minSupportedPhpVersion' => '8.0',
     'basePath' => dirname(__DIR__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR,
     'bootstrap' => ['log', 'humhub\components\bootstrap\ModuleAutoLoader', 'queue', 'humhub\modules\ui\view\bootstrap\ThemeLoader'],
     'sourceLanguage' => 'en',
@@ -37,19 +39,19 @@ $config = [
     ],
     'components' => [
         'moduleManager' => [
-            'class' => \humhub\components\ModuleManager::class
+            'class' => \humhub\components\ModuleManager::class,
         ],
         'notification' => [
             'class' => \humhub\modules\notification\components\NotificationManager::class,
             'targets' => [
                 \humhub\modules\notification\targets\WebTarget::class => [
-                    'renderer' => ['class' => \humhub\modules\notification\renderer\WebRenderer::class]
+                    'renderer' => ['class' => \humhub\modules\notification\renderer\WebRenderer::class],
                 ],
                 \humhub\modules\notification\targets\MailTarget::class => [
-                    'renderer' => ['class' => \humhub\modules\notification\renderer\MailRenderer::class]
+                    'renderer' => ['class' => \humhub\modules\notification\renderer\MailRenderer::class],
                 ],
-                \humhub\modules\notification\targets\MobileTarget::class => []
-            ]
+                \humhub\modules\notification\targets\MobileTarget::class => [],
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -60,24 +62,21 @@ $config = [
                     'except' => [
                         'yii\web\HttpException:400', 'yii\web\HttpException:401', 'yii\web\HttpException:403',
                         'yii\web\HttpException:404', 'yii\web\HttpException:405',
-                        'yii\web\User::getIdentityAndDurationFromCookie', 'yii\web\User::renewAuthStatus'
+                        'yii\web\User::getIdentityAndDurationFromCookie', 'yii\web\User::renewAuthStatus',
                     ],
                     'logVars' => ['_GET', '_SERVER'],
                 ],
-                \yii\log\DbTarget::class =>[
+                \yii\log\DbTarget::class => [
                     'class' => \yii\log\DbTarget::class,
                     'levels' => ['error', 'warning'],
                     'except' => [
                         'yii\web\HttpException:400', 'yii\web\HttpException:401', 'yii\web\HttpException:403',
                         'yii\web\HttpException:404', 'yii\web\HttpException:405',
-                        'yii\web\User::getIdentityAndDurationFromCookie', 'yii\web\User::renewAuthStatus'
+                        'yii\web\User::getIdentityAndDurationFromCookie', 'yii\web\User::renewAuthStatus',
                     ],
                     'logVars' => ['_GET', '_SERVER'],
                 ],
             ],
-        ],
-        'search' => [
-            'class' => \humhub\modules\search\engine\ZendLuceneSearch::class,
         ],
         'settings' => [
             'class' => \humhub\components\SettingsManager::class,
@@ -88,19 +87,24 @@ $config = [
             'translations' => [
                 'base' => [
                     'class' => PhpMessageSource::class,
-                    'basePath' => '@humhub/messages'
+                    'basePath' => '@humhub/messages',
                 ],
                 'error' => [
                     'class' => PhpMessageSource::class,
-                    'basePath' => '@humhub/messages'
+                    'basePath' => '@humhub/messages',
                 ],
                 'humhub.yii' => [
                     'class' => PhpMessageSource::class,
-                    'basePath' => '@humhub/messages'
+                    'basePath' => '@humhub/messages',
+                ],
+                'SearchModule.*' => [
+                    // Temporary: During conversion of the search module
+                    'class' => PhpMessageSource::class,
+                    'basePath' => '@humhub/messages',
                 ],
                 'custom' => [
                     'class' => PhpMessageSource::class,
-                    'basePath' => '@humhub/messages'
+                    'basePath' => '@humhub/messages',
                 ],
             ],
         ],
@@ -110,6 +114,10 @@ $config = [
         'cache' => [
             'class' => \yii\caching\DummyCache::class,
         ],
+        'runtimeCache' => [
+            'class' => \yii\caching\ArrayCache::class,
+            'serializer' => false,
+        ],
         'mailer' => [
             'class' => \humhub\components\mail\Mailer::class,
             'viewPath' => '@humhub/views/mail',
@@ -117,7 +125,7 @@ $config = [
                 'class' => \yii\web\View::class,
                 'theme' => [
                     'class' => \humhub\modules\ui\view\components\Theme::class,
-                    'name' => 'HumHub'
+                    'name' => 'HumHub',
                 ],
             ],
         ],
@@ -138,7 +146,7 @@ $config = [
             // Fix for MySQL 8.0.21+: https://github.com/yiisoft/yii2/issues/18207
             'schemaMap' => [
                 'mysqli' => 'humhub\components\db\MysqlSchema',
-                'mysql' => 'humhub\components\db\MysqlSchema'
+                'mysql' => 'humhub\components\db\MysqlSchema',
             ],
             'dsn' => 'mysql:host=localhost;dbname=humhub',
             'username' => '',
@@ -164,12 +172,11 @@ $config = [
             ],
         ],
         'mutex' => [
-            'class' => \yii\mutex\MysqlMutex::class
+            'class' => \yii\mutex\MysqlMutex::class,
         ],
     ],
     'params' => [
         'installed' => false,
-        'databaseInstalled' => false,
         'databaseDefaultStorageEngine' => 'InnoDB',
         'dynamicConfigFile' => '@config/dynamic.php',
         'moduleAutoloadPaths' => ['@app/modules', '@humhub/modules'],
@@ -188,7 +195,7 @@ $config = [
             'th' => 'ไทย',
             'tr' => 'Türkçe',
             'ru' => 'Русский',
-            'uk' => 'українська',
+            'uk' => 'Українська',
             'el' => 'Ελληνικά',
             'ja' => '日本語',
             'hu' => 'Magyar',
@@ -199,27 +206,29 @@ $config = [
             'an' => 'Aragonés',
             'vi' => 'Tiếng Việt',
             'sv' => 'Svenska',
-            'cs' => 'čeština',
-            'da' => 'dansk',
+            'cs' => 'Čeština',
+            'da' => 'Dansk',
             'uz' => 'Ўзбек',
             'fa-IR' => 'فارسی',
-            'bg' => 'български',
-            'sk' => 'slovenčina',
-            'ro' => 'română',
+            'bg' => 'Български',
+            'sk' => 'Slovenčina',
+            'ro' => 'Română',
             'ar' => 'العربية/عربي‎‎',
             'ko' => '한국어',
             'id' => 'Bahasa Indonesia',
-            'lt' => 'lietuvių kalba',
+            'lt' => 'Lietuvių kalba',
             'ht' => 'Kreyòl ayisyen',
             'lv' => 'Latvijas',
             'sl' => 'Slovenščina',
             'hr' => 'Hrvatski',
             'am' => 'አማርኛ',
-            'fi' => 'suomalainen',
+            'fi' => 'Suomalainen',
             'he' => 'עברית',
             'sq' => 'Shqip',
             'cy' => 'Cymraeg',
             'sw' => 'Kiswahili',
+            'sr' => 'Сербисцх',
+            'eu' => 'Basque',
         ],
         'ldap' => [
             // LDAP date field formats
@@ -249,9 +258,6 @@ $config = [
             'apiEnabled' => true,
             'apiUrl' => 'https://api.humhub.com',
         ],
-        'search' => [
-            'zendLucenceDataDir' => '@runtime/searchdb',
-        ],
         'curl' => [
             // Check SSL certificates on cURL requests
             'validateSsl' => true,
@@ -264,17 +270,11 @@ $config = [
         ],
         'twemoji' => [
             'path' => '@web-static/img/twemoji/',
-            'size' => '72x72'
+            'size' => '72x72',
         ],
         'enablePjax' => true,
         'dailyCronExecutionTime' => '18:00',
     ],
-    'container' => [
-        'definitions' => [
-            //todo: Remove after Yii 2.0.48 release
-            \yii\validators\DateValidator::class => humhub\components\validators\DateValidator::class,
-        ]
-    ]
 ];
 
 return $config;

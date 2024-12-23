@@ -57,6 +57,7 @@ return array (
   'LinkedIn URL' => 'LinkedIn URL',
   'Male' => 'Férfi',
   'Markdown' => 'Markdown',
+  'Mastodon URL' => 'Mastodon URL',
   'Maximum length' => 'Maximum hosszúság',
   'Maximum value' => 'Maximum érték',
   'Minimum length' => 'Minimum hosszúság',

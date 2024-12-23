@@ -14,14 +14,13 @@ use humhub\modules\post\models\Post;
 
 class CommentEditTest extends HumHubDbTestCase
 {
-
     public function testNewCommentIsNotEdited()
     {
         $this->becomeUser('User2');
         $comment = new Comment([
             'message' => 'User2 comment!',
             'object_model' => Post::class,
-            'object_id' => 11
+            'object_id' => 11,
         ]);
 
         $this->assertTrue($comment->save());
@@ -38,7 +37,7 @@ class CommentEditTest extends HumHubDbTestCase
         $comment = new Comment([
             'message' => 'User2 comment!',
             'object_model' => Post::class,
-            'object_id' => 11
+            'object_id' => 11,
         ]);
 
         $this->assertTrue($comment->save());

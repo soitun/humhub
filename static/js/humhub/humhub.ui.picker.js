@@ -170,6 +170,8 @@ humhub.module('ui.picker', function (module, require, $) {
             if ($node.data('picker-focus')) {
                 Widget.instance($node).focus();
             }
+
+            Widget.instance($node).fire('afterInitSelect2');
         });
     };
 
@@ -214,6 +216,7 @@ humhub.module('ui.picker', function (module, require, $) {
         resultDisabled: '<a href="#" title="{disabledText}" data-placement="right" tabindex="-1" style="margin-right:5px;opacity: 0.4;cursor:not-allowed">{imageNode} <span class="picker-text"></span></a>',
         imageNode: '<img class="img-rounded" src="{image}" alt="" style="width:24px;height:24px;"  height="24" width="24">',
         imageIcon: '<i class="fa {image}"></i> ',
+        imageColor: '<span class="picker-color" style="background:{image}"></span> ',
         option: '<option value="{id}" data-image=\'{image}\' selected></option>',
     };
 
@@ -268,7 +271,7 @@ humhub.module('ui.picker', function (module, require, $) {
      */
     Picker.prototype.templateResult = function (item) {
         // If no item id is given the function was called for the search term.
-        if (!item.id) {
+        if (typeof(item.id) === 'undefined') {
             return loader.set($('<div></div>'), {'css': {'padding': '4px'}});
         }
 
@@ -341,16 +344,17 @@ humhub.module('ui.picker', function (module, require, $) {
             return '';
         }
 
-        if(image.indexOf('<') >= 0) {
+        if (image.indexOf('<') >= 0) {
             return image;
-        } else if(image.indexOf('fa-') === 0) {
+        }
+        if (image.indexOf('fa-') === 0) {
             return string.template(Picker.template.imageIcon, item);
-        } else {
-            return string.template(Picker.template.imageNode, item);
+        }
+        if(image.indexOf('#') === 0) {
+            return string.template(Picker.template.imageColor, item);
         }
 
-        // The image is either an html node itself or just an url
-        return (image.indexOf('<') >= 0) ? image : string.template(Picker.template.imageNode, item);
+        return string.template(Picker.template.imageNode, item);
     };
 
 

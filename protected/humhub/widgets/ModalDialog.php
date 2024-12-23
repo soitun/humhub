@@ -1,4 +1,5 @@
 <?php
+
 namespace humhub\widgets;
 
 /**
@@ -8,7 +9,6 @@ namespace humhub\widgets;
  */
 class ModalDialog extends Modal
 {
-
     /**
      * @var
      */
@@ -46,7 +46,7 @@ class ModalDialog extends Modal
         $bodyClass = 'modal-body';
         $bodyClass .= $this->centerText ? ' text-center' : '';
 
-        $this->initialLoader = ($this->initialLoader ==! null) ? $this->initialLoader : ($this->body === null);
+        $this->initialLoader = ($this->initialLoader == ! null) ? $this->initialLoader : ($this->body === null);
 
         return $this->render('modalDialog', [
             'header' => $this->header,
@@ -56,19 +56,19 @@ class ModalDialog extends Modal
             'bodyClass' => $bodyClass,
             'footer' => $this->footer,
             'initialLoader' => $this->initialLoader,
-            'showClose' => $showClose
+            'showClose' => $showClose,
         ]);
     }
 
     public function getAttributes()
     {
         $dialogClass = 'modal-dialog';
-        $dialogClass .= $this->size ? ' modal-dialog-'.$this->size : '';
-        $dialogClass .= $this->animation ? ' animated '.$this->animation : '';
-        $dialogClass .= ' '.$this->dialogClass;
+        $dialogClass .= $this->size ? ' modal-dialog-' . $this->size : '';
+        $dialogClass .= $this->animation ? ' animated ' . $this->animation : '';
+        $dialogClass .= ' ' . $this->dialogClass;
 
         return [
-            'class' => $dialogClass
+            'class' => $dialogClass,
         ];
     }
     public function getData()

@@ -13,7 +13,6 @@ use yii\db\ActiveQuery;
  */
 class FilterForm extends Model
 {
-
     /**
      * Contains the current module filters
      * @var array
@@ -87,7 +86,7 @@ class FilterForm extends Model
         foreach ($this->getNotifications() as $notification) {
             $categoryId = $notification->getCategory()->id;
             if (!in_array($categoryId, $this->categoryFilter)) {
-                $result[] = $notification->className();
+                $result[] = get_class($notification);
             }
         }
         return $result;
@@ -116,7 +115,7 @@ class FilterForm extends Model
     public function getNotifications(): array
     {
         if ($this->notifications == null) {
-            $this->notifications = array_filter(Yii::$app->notification->getNotifications(), function($notification) {
+            $this->notifications = array_filter(Yii::$app->notification->getNotifications(), function ($notification) {
                 return $notification->getCategory() != null;
             });
         }
@@ -146,7 +145,7 @@ class FilterForm extends Model
 
         $this->query = Notification::findGrouped();
         if ($this->hasFilter()) {
-            $this->query->andFilterWhere(['not in', 'class', $this->getExcludeClassFilter()]);
+            $this->query->andFilterWhere(['not in', 'notification.class', $this->getExcludeClassFilter()]);
         }
 
         return $this->query;
@@ -157,7 +156,7 @@ class FilterForm extends Model
         $countQuery = clone $this->createQuery();
         $pagination = new Pagination([
             'totalCount' => $countQuery->count(),
-            'pageSize' => $pageSize
+            'pageSize' => $pageSize,
         ]);
         $this->query->offset($pagination->offset)->limit($pagination->limit);
 
@@ -171,5 +170,4 @@ class FilterForm extends Model
 
         return $pagination;
     }
-
 }

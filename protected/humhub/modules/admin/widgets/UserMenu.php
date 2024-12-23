@@ -23,7 +23,6 @@ use humhub\modules\ui\menu\widgets\TabMenu;
  */
 class UserMenu extends TabMenu
 {
-
     /**
      * @inheritdoc
      */
@@ -37,7 +36,7 @@ class UserMenu extends TabMenu
             'isVisible' => Yii::$app->user->can([
                 ManageUsers::class,
                 ManageGroups::class,
-            ])
+            ]),
         ]));
 
         $this->addEntry(new MenuLink([
@@ -45,8 +44,8 @@ class UserMenu extends TabMenu
             'url' => ['/admin/authentication'],
             'sortOrder' => 200,
             'isActive' => MenuLink::isActiveState('admin', ['authentication', 'user-permissions']) ||
-                          MenuLink::isActiveState('ldap', 'admin'),
-            'isVisible' => Yii::$app->user->can(ManageSettings::class)
+                MenuLink::isActiveState('ldap', 'admin'),
+            'isVisible' => Yii::$app->user->can(ManageSettings::class),
         ]));
 
         $approvalCount = UserApprovalSearch::getUserApprovalCount();
@@ -59,8 +58,8 @@ class UserMenu extends TabMenu
                 'isActive' => MenuLink::isActiveState('admin', 'approval'),
                 'isVisible' => Yii::$app->user->can([
                     ManageUsers::class,
-                    ManageGroups::class
-                ])
+                    ManageGroups::class,
+                ]),
             ]));
         }
 
@@ -69,7 +68,7 @@ class UserMenu extends TabMenu
             'url' => ['/admin/user-profile'],
             'sortOrder' => 400,
             'isActive' => MenuLink::isActiveState('admin', 'user-profile'),
-            'isVisible' => Yii::$app->user->can(ManageUsers::class)
+            'isVisible' => Yii::$app->user->can(ManageUsers::class),
         ]));
 
         $this->addEntry(new MenuLink([
@@ -77,7 +76,7 @@ class UserMenu extends TabMenu
             'url' => ['/admin/group'],
             'sortOrder' => 500,
             'isActive' => MenuLink::isActiveState('admin', 'group'),
-            'isVisible' => Yii::$app->user->can(ManageGroups::class)
+            'isVisible' => Yii::$app->user->can(ManageGroups::class),
         ]));
 
         $this->addEntry(new MenuLink([
@@ -85,7 +84,7 @@ class UserMenu extends TabMenu
             'url' => ['/admin/user-people'],
             'sortOrder' => 600,
             'isActive' => MenuLink::isActiveState('admin', 'user-people'),
-            'isVisible' => Yii::$app->user->can(ManageSettings::class)
+            'isVisible' => Yii::$app->user->can(ManageSettings::class),
         ]));
 
 

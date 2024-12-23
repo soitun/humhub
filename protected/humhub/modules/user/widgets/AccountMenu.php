@@ -23,13 +23,12 @@ use humhub\modules\ui\menu\widgets\LeftNavigation;
  */
 class AccountMenu extends LeftNavigation
 {
-
     /**
      * @inheritdoc
      */
     public function init()
     {
-        $this->panelTitle = Yii::t('UserModule.account', '<strong>User</strong> Account');
+        $this->panelTitle = Yii::t('UserModule.account', '<strong>Your</strong> Account');
 
         $this->addEntry(new MenuLink([
             'label' => Yii::t('UserModule.account', 'Profile'),
@@ -37,7 +36,7 @@ class AccountMenu extends LeftNavigation
             'icon' => 'user',
             'url' => ['/user/account/edit'],
             'sortOrder' => 100,
-            'isActive' => MenuLink::isActiveState('user', 'account', ['edit', 'change-email', 'change-password', 'delete'])
+            'isActive' => MenuLink::isActiveState('user', 'account', ['edit', 'change-username', 'change-email', 'change-password', 'delete']),
         ]));
 
         $this->addEntry(new MenuLink([
@@ -46,16 +45,16 @@ class AccountMenu extends LeftNavigation
             'icon' => 'bell',
             'url' => ['/notification/user'],
             'sortOrder' => 106,
-            'isActive' => MenuLink::isActiveState('notification')
+            'isActive' => MenuLink::isActiveState('notification'),
         ]));
 
         $this->addEntry(new MenuLink([
-            'label' => Yii::t('UserModule.account', 'Account Settings'),
+            'label' => Yii::t('UserModule.account', 'General'),
             'id' => 'account-settings-settings',
             'icon' => 'wrench',
             'url' => ['/user/account/edit-settings'],
             'sortOrder' => 110,
-            'isActive' => MenuLink::isActiveState('user', 'account', 'edit-settings')
+            'isActive' => MenuLink::isActiveState('user', 'account', 'edit-settings'),
         ]));
 
         /** @var Module $module */
@@ -67,7 +66,7 @@ class AccountMenu extends LeftNavigation
                 'icon' => 'lock',
                 'url' => ['/user/account/permissions'],
                 'sortOrder' => 115,
-                'isActive' => MenuLink::isActiveState('user', 'account', 'permissions')
+                'isActive' => MenuLink::isActiveState('user', 'account', 'permissions'),
             ]));
         }
 
@@ -80,7 +79,7 @@ class AccountMenu extends LeftNavigation
             'url' => ['/user/account/edit-modules'],
             'sortOrder' => 120,
             'isActive' => MenuLink::isActiveState('user', 'account', 'edit-modules'),
-            'isVisible' => (count($user->moduleManager->getAvailable()) !== 0)
+            'isVisible' => (count($user->moduleManager->getAvailable()) !== 0),
         ]));
 
         parent::init();

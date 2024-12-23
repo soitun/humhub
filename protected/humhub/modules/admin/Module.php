@@ -17,7 +17,6 @@ use humhub\modules\space\models\Space;
  */
 class Module extends \humhub\components\Module
 {
-
     /**
      * @inheritdoc
      */
@@ -39,18 +38,18 @@ class Module extends \humhub\components\Module
     public $resourcesPath = 'resources';
 
     /**
-     * @var boolean check daily for new HumHub version
+     * @var bool check daily for new HumHub version
      */
     public $dailyCheckForNewVersion = true;
 
     /**
-     * @var boolean allow admins to impersonate other users
+     * @var bool allow admins to impersonate other users
      */
     public $allowUserImpersonate = true;
 
     /**
      * @since 1.3.2
-     * @var boolean show incomplete setup warning on the dashboard for admins
+     * @var bool show incomplete setup warning on the dashboard for admins
      */
     public $showDashboardIncompleteSetupWarning = true;
 
@@ -59,7 +58,7 @@ class Module extends \humhub\components\Module
      * @var array list of script urls which should not be cached on the client side
      */
     public $defaultReloadableScripts = [
-        'https://platform.twitter.com/widgets.js'
+        'https://platform.twitter.com/widgets.js',
     ];
 
     /**
@@ -103,7 +102,7 @@ class Module extends \humhub\components\Module
     {
         if (Yii::$app->user->isAdmin()) {
             return [
-                'humhub\modules\admin\notifications\NewVersionAvailable'
+                'humhub\modules\admin\notifications\NewVersionAvailable',
             ];
         }
 

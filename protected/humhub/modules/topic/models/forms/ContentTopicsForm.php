@@ -8,7 +8,6 @@
 
 namespace humhub\modules\topic\models\forms;
 
-
 use humhub\modules\topic\models\Topic;
 use yii\base\Model;
 
@@ -26,7 +25,7 @@ class ContentTopicsForm extends Model
     public function rules()
     {
         return [
-            ['topics', 'safe']
+            ['topics', 'safe'],
         ];
     }
 
