@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @link https://www.humhub.org/
  * @copyright Copyright (c) 2023 HumHub GmbH & Co. KG
@@ -17,7 +18,7 @@ use yii\base\Component;
  */
 class ContentStateService extends Component
 {
-    const EVENT_INIT = 'init';
+    public const EVENT_INIT = 'init';
 
     public Content $content;
 
@@ -45,7 +46,9 @@ class ContentStateService extends Component
      */
     public function allowState(int $state)
     {
-        $this->states[] = $state;
+        if (!in_array($state, $this->states, true)) {
+            $this->states[] = $state;
+        }
     }
 
     /**
@@ -71,12 +74,21 @@ class ContentStateService extends Component
     {
         // Always convert to integer before comparing,
         // because right after save the content->state may be a string
-        return (int) $this->content->state === (int) $state;
+        return (int)$this->content->state === (int)$state;
     }
 
     public function isPublished(): bool
     {
         return $this->is(Content::STATE_PUBLISHED);
+    }
+
+    /**
+     * @return bool
+     * @since 1.14.3
+     */
+    public function wasPublished(): bool
+    {
+        return (bool)$this->content->was_published;
     }
 
     public function isDraft(): bool
@@ -102,7 +114,7 @@ class ContentStateService extends Component
      */
     public function canChange($state): bool
     {
-        return in_array((int) $state, $this->states);
+        return in_array((int)$state, $this->states);
     }
 
     /**
@@ -113,11 +125,13 @@ class ContentStateService extends Component
      */
     public function set($state, array $options = []): bool
     {
+        $state = (int)$state;
+
         if (!$this->canChange($state)) {
             return false;
         }
 
-        if ((int) $state === Content::STATE_SCHEDULED) {
+        if ($state === Content::STATE_SCHEDULED) {
             if (empty($options['scheduled_at'])) {
                 return false;
             }
@@ -130,7 +144,7 @@ class ContentStateService extends Component
             }
         }
 
-        $this->content->state = $state;
+        $this->content->setAttribute('state', $state);
         return true;
     }
 

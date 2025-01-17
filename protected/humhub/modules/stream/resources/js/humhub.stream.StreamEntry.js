@@ -98,11 +98,11 @@ humhub.module('stream.StreamEntry', function (module, require, $) {
      * @param evt
      */
     StreamEntry.prototype.edit = function (evt) {
-
-        var that = this;
+        const that = this;
+        const data = {viewContext: that.data('viewContext')};
 
         that.loader();
-        client.html(evt).then(function (response) {
+        client.html(evt, {data}).then(function (response) {
             that.$.find('.stream-entry-edit-link').hide();
             that.$.find('.stream-entry-cancel-edit-link').show();
             that.setEditContent(response.html);
@@ -193,7 +193,9 @@ humhub.module('stream.StreamEntry', function (module, require, $) {
             dataType: 'html',
         }).status({
             200: function (response) {
-                that.$.replaceWith(response.html);
+                const updatedEntry = $(response.html)
+                that.$.replaceWith(updatedEntry);
+                that.$ = updatedEntry;
                 that.apply();
                 that.highlight();
             },
